@@ -1,31 +1,46 @@
-# elm-3d-playground-exploration
+# Elmgine
 
-A modification of [evancz/elm-playground](https://package.elm-lang.org/packages/evancz/elm-playground/latest/) where elm/svg is replaced by [ianmackenzie/elm-3d-scene](https://package.elm-lang.org/packages/ianmackenzie/elm-3d-scene/latest/).
-
-# [Click here to see the examples](https://github.com/erkal/elm-3d-playground-exploration/blob/main/DEMOS.md)
+A modification of [erkal/elm-3d-playground-exploration](https://github.com/erkal/elm-3d-playground-exploration) where a GUI is provided for writing code, modifying configurations, and a WYSIWYG editor for the game world.
 
 
-# For Development 
+## For Development 
 First [install yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) if you don't have it already.
 
 Clone the repository
-```
-git clone https://github.com/erkal/elm-3d-playground-exploration.git
+```bash
+git clone https://github.com/wolfadex/elmgine.git
 ```
 and navigate into it:
-```
-cd elm-3d-playground-exploration
-```
-
-To install all dependencies, type
-```
-yarn install
+```bash
+cd elmgine
 ```
 
-To run a development server with hot-reloading, type
+To install all dependencies, type and run
+```bash
+yarn
 ```
+
+To compile the editor in dev mode run
+```bash
 yarn dev
 ```
-enter the number you are asked for and open the shown url in your browser.
+To start the editor run
+```bash
+yarn start
+```
 
-To create a new example, just duplicate one of the directories in `examples` directory.
+## Example
+
+Once the editor is running, paste
+```elm
+module UserGame exposing (view)
+
+import Html exposing (Html)
+
+view : Html msg
+view =
+    Html.text "G g g game TIME!!"
+```
+into the editor and click `Compile`. The running version of your game will display below the code editor.
+
+**Note: The editor currently expects a module named `UserGame` with an exposed function `view : Html msg`. This will be updated as new features were added.**
