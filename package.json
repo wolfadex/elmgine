@@ -1,27 +1,30 @@
 {
   "name": "3d-playground",
   "version": "1.0.0",
-  "main": "",
+  "main": "main.js",
   "targets": {
     "main": false
   },
-  "author": "erkal",
+  "author": "Wolfgang Schuster",
   "license": "MIT",
   "dependencies": {
-    "yarn": "^1.22.10"
+    "@codemirror/basic-setup": "^0.18.2",
+    "@codemirror/commands": "^0.18.3",
+    "@codemirror/language": "^0.18.2",
+    "@codemirror/legacy-modes": "^0.18.1",
+    "@codemirror/state": "^0.18.7",
+    "@codemirror/stream-parser": "^0.18.2",
+    "@codemirror/view": "^0.18.19"
   },
   "scripts": {
-    "deploy": "bash scripts/deploy.sh",
-    "dev": "bash scripts/dev.sh",
-    "build": "bash scripts/build.sh"
+    "start": "electron .",
+    "dev": "node scripts/dev.js"
   },
   "devDependencies": {
-    "@parcel/transformer-elm": "2.0.0-rc.0",
+    "electron": "^13.1.8",
     "elm": "^0.19.1-5",
     "elm-format": "^0.8.5",
-    "elm-hot": "^1.1.6",
-    "gh-pages": "^3.1.0",
-    "node-elm-compiler": "^5.0.5",
-    "parcel": "^2.0.0-rc.2"
+    "esbuild": "^0.12.18",
+    "esbuild-plugin-elm": "^0.0.4"
   }
 }

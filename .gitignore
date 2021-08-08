@@ -3,12 +3,9 @@
 .parcel-cache
 
 elm-stuff
+node_modules
 
-/.cache
-/node_modules
-
-/dist
-/dev-temp
+dist
 
 yarn-error.log
 yarn.lock
