@@ -2,7 +2,6 @@ import { StreamLanguage } from "@codemirror/stream-parser";
 import { elm as codemirrorElmLanguage } from "@codemirror/legacy-modes/mode/elm";
 import { basicSetup } from "@codemirror/basic-setup";
 import { EditorView, keymap } from "@codemirror/view";
-import { defaultTabBinding } from "@codemirror/commands";
 import {
   EditorState,
   Transaction,
@@ -75,18 +74,15 @@ customElements.define(
       const forwardUpdate = StateField.define({
         create: (state) => state,
         update: (state, transaction) => {
-          console.log(transaction.newDoc.text);
-          this.emitUpdate(transaction.newDoc.text);
+          console.log(transaction.newDoc.toString());
+          this.emitUpdate(transaction.newDoc.toString());
           return state;
         },
       });
       const state = EditorState.create({
         extensions: [
           basicSetup,
-          keymap.of([
-            elmEditorTabBinding,
-            // defaultTabBinding
-          ]),
+          keymap.of([elmEditorTabBinding]),
           //   language.of(markdown()),
           StreamLanguage.define(codemirrorElmLanguage),
           forwardUpdate,
@@ -100,9 +96,7 @@ customElements.define(
     }
 
     emitUpdate(text) {
-      this.dispatchEvent(
-        new CustomEvent("change", { detail: text.join("\n") })
-      );
+      this.dispatchEvent(new CustomEvent("change", { detail: text }));
     }
 
     disconnectedCallback() {}
