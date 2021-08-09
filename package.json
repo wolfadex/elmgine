@@ -1,6 +1,6 @@
 {
-  "name": "3d-playground",
-  "version": "1.0.0",
+  "name": "Elmgine",
+  "version": "0.2.0",
   "main": "main.js",
   "targets": {
     "main": false

@@ -38,7 +38,7 @@ init () =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     compileComplete CompileComplete
 
 
@@ -125,10 +125,10 @@ viewBody model =
             ]
         , codeEditor CodeChange
         , case model.sourceCodeState of
-            ( timestamp,Err  err ) ->
+            ( timestamp, Err err ) ->
                 text err
 
-            ( timestamp,Ok  () ) ->
+            ( timestamp, Ok () ) ->
                 Element.Lazy.lazy gamePreview timestamp
         ]
 
