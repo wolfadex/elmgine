@@ -2,6 +2,8 @@
 
 A modification of [erkal/elm-3d-playground-exploration](https://github.com/erkal/elm-3d-playground-exploration) where a GUI is provided for writing code, modifying configurations, and a WYSIWYG editor for the game world.
 
+# ⚠ This is an experiment! Expect frequent breaking changes poor performance. ⚠
+
 
 ## For Development 
 First [install yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) if you don't have it already.
@@ -43,4 +45,4 @@ view =
 ```
 into the editor and click `Compile`. The running version of your game will display below the code editor.
 
-**Note: The editor currently expects a module named `UserGame` with an exposed function `view : Html msg`. This will be updated as new features were added.**
+**Note: To escape the code editor with the keyboard press `Esc` and the either `Tab` or `Shift + Tab`. This allows you to use the `Tab` key to insert correct indentation in the code editor.

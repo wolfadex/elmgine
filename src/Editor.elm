@@ -2,13 +2,16 @@ port module Editor exposing (main)
 
 import Browser
 import Element exposing (..)
-import Element.Input as Input
+import Element.Background as Background
+import Element.Font as Font
 import Element.Lazy
-import Html exposing (Html)
+import Html exposing (Html, a)
 import Html.Attributes
 import Html.Events
 import Json.Decode exposing (Decoder)
 import Json.Encode exposing (Value)
+import Theme.Color
+import Theme.Input as Input
 import Time exposing (Posix)
 
 
@@ -24,14 +27,21 @@ main =
 
 type alias Model =
     { code : String
-    , sourceCodeState : ( Posix, Result String () )
+    , sourceCodeState : RemoteData String Posix
     }
+
+
+type RemoteData e a
+    = NotAsked
+    | Loading (Maybe a)
+    | Failure e
+    | Success a
 
 
 init : () -> ( Model, Cmd Msg )
 init () =
     ( { code = ""
-      , sourceCodeState = ( Time.millisToPosix 0, Err "" )
+      , sourceCodeState = NotAsked
       }
     , Cmd.none
     )
@@ -65,42 +75,53 @@ update msg model =
             ( { model | code = code }, Cmd.none )
 
         CompileCode ->
-            ( model, compileCode model.code )
+            ( { model
+                | sourceCodeState =
+                    case model.sourceCodeState of
+                        NotAsked ->
+                            Loading Nothing
+
+                        Failure _ ->
+                            Loading Nothing
+
+                        Success timestamp ->
+                            Loading (Just timestamp)
+
+                        Loading maybeSuccess ->
+                            Loading maybeSuccess
+              }
+            , compileCode model.code
+            )
 
         CompileComplete response ->
             let
                 newSourceCodeState =
                     case Json.Decode.decodeValue decodeCompileResponse response of
                         Err err ->
-                            ( Tuple.first model.sourceCodeState
-                                |> Time.posixToMillis
-                                |> (+) 1
-                                |> Time.millisToPosix
-                            , Err (Json.Decode.errorToString err)
-                            )
+                            Failure (Json.Decode.errorToString err)
 
-                        Ok maybeCompileErr ->
-                            maybeCompileErr
+                        Ok (Ok timestamp) ->
+                            Success timestamp
+
+                        Ok (Err err) ->
+                            Failure err
             in
             ( { model | sourceCodeState = newSourceCodeState }
             , Cmd.none
             )
 
 
-decodeCompileResponse : Decoder ( Posix, Result String () )
+decodeCompileResponse : Decoder (Result String Posix)
 decodeCompileResponse =
-    Json.Decode.map2 Tuple.pair
-        (Json.Decode.field "timestamp" Json.Decode.int
-            |> Json.Decode.map Time.millisToPosix
-        )
-        (Json.Decode.field "ok" Json.Decode.bool)
+    Json.Decode.field "ok" Json.Decode.bool
         |> Json.Decode.andThen
-            (\( timestamp, isOk ) ->
+            (\isOk ->
                 if isOk then
-                    Json.Decode.succeed ( timestamp, Ok () )
+                    Json.Decode.field "timestamp" Json.Decode.int
+                        |> Json.Decode.map (Time.millisToPosix >> Ok)
 
                 else
-                    Json.Decode.map (\err -> ( timestamp, Err err ))
+                    Json.Decode.map Err
                         (Json.Decode.field "err" Json.Decode.string)
             )
 
@@ -115,20 +136,44 @@ viewBody model =
     column
         [ width fill, height fill ]
         [ row
-            []
-            [ text "Elmgine"
+            [ spacing 8
+            , padding 8
+            , Background.color Theme.Color.orange
+            , width fill
+            ]
+            [ el [ Font.color Theme.Color.black ] <| text "Elmgine"
             , Input.button
-                []
                 { onPress = Just CompileCode
-                , label = text "Compile"
+                , label =
+                    case model.sourceCodeState of
+                        NotAsked ->
+                            text "Compile"
+
+                        Loading _ ->
+                            text "Compiling"
+
+                        Failure _ ->
+                            text "Compiling"
+
+                        Success _ ->
+                            text "Compile"
                 }
             ]
         , codeEditor CodeChange
         , case model.sourceCodeState of
-            ( timestamp, Err err ) ->
+            NotAsked ->
+                text "Write some code and press \"Compile\" to see the results"
+
+            Loading Nothing ->
+                text "Compiling"
+
+            Loading (Just timestamp) ->
+                Element.Lazy.lazy gamePreview timestamp
+
+            Failure err ->
                 text err
 
-            ( timestamp, Ok () ) ->
+            Success timestamp ->
                 Element.Lazy.lazy gamePreview timestamp
         ]
 
