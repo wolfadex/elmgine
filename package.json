@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "electron .",
-    "dev": "node scripts/dev.js"
+    "dev": "node scripts/dev.js && electron ."
   },
   "devDependencies": {
     "electron": "^13.1.8",
